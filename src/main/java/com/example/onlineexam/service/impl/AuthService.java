@@ -1,6 +1,7 @@
 package com.example.onlineexam.service.impl;
 
 import com.example.onlineexam.dto.*;
+import com.example.onlineexam.entity.Role;
 import com.example.onlineexam.entity.User;
 import com.example.onlineexam.repository.UserRepository;
 import com.example.onlineexam.security.JwtUtil;
@@ -21,13 +22,14 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
+            throw new RuntimeException("Email already registered"); // заменить на кастомное исключение
         }
+        Role role = request.getRole() != null ? request.getRole() : Role.STUDENT;  // по умолчанию STUDENT
 
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(role)
                 .build();
 
         userRepository.save(user);

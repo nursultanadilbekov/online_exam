@@ -15,10 +15,13 @@ public class Answer {
 
     private String answerText;
 
-    @ManyToOne
+    private boolean correct;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
     private Question question;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "submission_id")
     private Submission submission;
 }
-
