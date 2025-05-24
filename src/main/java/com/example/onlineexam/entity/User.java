@@ -32,7 +32,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    // Implementations for UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
@@ -40,7 +39,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // Email as username
+        return email;
     }
 
     @Override

@@ -3,6 +3,6 @@ package com.example.onlineexam.dto;
 import lombok.Data;
 
 @Data
-public class ExamCreateRequest {
+public class ExamRequest {
     private String title;
 }
