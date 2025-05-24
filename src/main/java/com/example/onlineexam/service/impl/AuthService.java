@@ -22,18 +22,16 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered"); // заменить на кастомное исключение
+            throw new RuntimeException("Email already registered");
         }
-        Role role = request.getRole() != null ? request.getRole() : Role.STUDENT;  // по умолчанию STUDENT
 
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(role)
+                .role(Role.STUDENT)
                 .build();
 
         userRepository.save(user);
-
         return new AuthResponse(jwtUtil.generateToken(user));
     }
 
