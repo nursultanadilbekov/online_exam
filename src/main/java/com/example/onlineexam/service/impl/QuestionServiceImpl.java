@@ -1,7 +1,10 @@
 package com.example.onlineexam.service.impl;
 
-import com.example.onlineexam.dto.*;
+import com.example.onlineexam.dto.QuestionDTO;
+import com.example.onlineexam.dto.QuestionRequest;
+import com.example.onlineexam.dto.AnswerRequest;
 import com.example.onlineexam.entity.*;
+import com.example.onlineexam.mapper.QuestionMapper;
 import com.example.onlineexam.repository.*;
 import com.example.onlineexam.security.SecurityUtil;
 import com.example.onlineexam.service.interfaces.QuestionService;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +28,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerRepository answerRepository;
 
     @Override
-    public Question addQuestionToExam(Long examId, QuestionRequest questionRequest) {
+    public QuestionDTO addQuestionToExam(Long examId, QuestionRequest questionRequest) {
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new EntityNotFoundException("Exam not found with id: " + examId));
 
@@ -54,7 +58,7 @@ public class QuestionServiceImpl implements QuestionService {
                 .exam(exam)
                 .build();
 
-        questionRequest.getAnswers().forEach(answerReq -> {
+        for (AnswerRequest answerReq : questionRequest.getAnswers()) {
             if (!StringUtils.hasText(answerReq.getAnswerText())) {
                 throw new IllegalArgumentException("Answer text must not be empty");
             }
@@ -66,26 +70,31 @@ public class QuestionServiceImpl implements QuestionService {
                     .build();
 
             question.getAnswers().add(answer);
-        });
+        }
 
-        return questionRepository.save(question);
-    }
-
-
-    @Override
-    public List<Question> getQuestionsByExamId(Long examId) {
-        return questionRepository.findByExamId(examId);
+        Question saved = questionRepository.save(question);
+        return QuestionMapper.toDTO(saved);
     }
 
     @Override
-    public Question getQuestionById(Long questionId) {
-        return questionRepository.findById(questionId)
+    public List<QuestionDTO> getQuestionsByExamId(Long examId) {
+        return questionRepository.findByExamId(examId)
+                .stream()
+                .map(QuestionMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public QuestionDTO getQuestionById(Long questionId) {
+        Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + questionId));
+        return QuestionMapper.toDTO(question);
     }
 
     @Override
-    public Question updateQuestion(Long questionId, QuestionRequest questionRequest) {
-        Question question = getQuestionById(questionId);
+    public QuestionDTO updateQuestion(Long questionId, QuestionRequest questionRequest) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + questionId));
 
         if (!StringUtils.hasText(questionRequest.getText())) {
             throw new IllegalArgumentException("Question text must not be empty");
@@ -97,22 +106,28 @@ public class QuestionServiceImpl implements QuestionService {
         answerRepository.deleteAll(question.getAnswers());
         question.getAnswers().clear();
 
-        // Добавляем новые ответы
-        questionRequest.getAnswers().forEach(answerReq -> {
+        for (AnswerRequest answerReq : questionRequest.getAnswers()) {
+            if (!StringUtils.hasText(answerReq.getAnswerText())) {
+                throw new IllegalArgumentException("Answer text must not be empty");
+            }
+
             Answer answer = Answer.builder()
                     .text(answerReq.getAnswerText())
                     .correct(answerReq.isCorrect())
                     .question(question)
                     .build();
-            question.getAnswers().add(answer);
-        });
 
-        return questionRepository.save(question);
+            question.getAnswers().add(answer);
+        }
+
+        Question updated = questionRepository.save(question);
+        return QuestionMapper.toDTO(updated);
     }
 
     @Override
     public void deleteQuestion(Long questionId) {
-        Question question = getQuestionById(questionId);
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + questionId));
         questionRepository.delete(question);
     }
 }
