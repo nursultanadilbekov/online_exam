@@ -26,6 +26,6 @@ public class Submission {
 
     private int score;
 
-    @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
+    @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL)
+    private List<AnswerSubmission> answerSubmissions = new ArrayList<>();
 }
