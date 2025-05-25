@@ -1,10 +1,11 @@
 package com.example.onlineexam.dto;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
-public class AnswerDTO {
+public class QuestionDTO {
     private Long id;
     private String text;
-    private boolean correct;
+    private List<AnswerDTO> answers;
 }

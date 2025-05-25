@@ -3,10 +3,12 @@ package com.example.onlineexam.service.impl;
 import com.example.onlineexam.dto.*;
 import com.example.onlineexam.entity.*;
 import com.example.onlineexam.repository.*;
+import com.example.onlineexam.security.SecurityUtil;
 import com.example.onlineexam.service.interfaces.QuestionService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -26,8 +28,25 @@ public class QuestionServiceImpl implements QuestionService {
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new EntityNotFoundException("Exam not found with id: " + examId));
 
+        User currentUser = SecurityUtil.getCurrentUser();
+        boolean isOwner = exam.getTeacher().getId().equals(currentUser.getId());
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("You can only add questions to your own exams.");
+        }
+
         if (!StringUtils.hasText(questionRequest.getText())) {
             throw new IllegalArgumentException("Question text must not be empty");
+        }
+
+        if (questionRequest.getAnswers() == null || questionRequest.getAnswers().isEmpty()) {
+            throw new IllegalArgumentException("Question must have at least one answer");
+        }
+
+        boolean hasCorrectAnswer = questionRequest.getAnswers().stream().anyMatch(AnswerRequest::isCorrect);
+        if (!hasCorrectAnswer) {
+            throw new IllegalArgumentException("At least one answer must be marked as correct");
         }
 
         Question question = Question.builder()
@@ -35,18 +54,23 @@ public class QuestionServiceImpl implements QuestionService {
                 .exam(exam)
                 .build();
 
-        // Добавляем ответы в question.answers (будут сохранены каскадом)
         questionRequest.getAnswers().forEach(answerReq -> {
+            if (!StringUtils.hasText(answerReq.getAnswerText())) {
+                throw new IllegalArgumentException("Answer text must not be empty");
+            }
+
             Answer answer = Answer.builder()
-                    .answerText(answerReq.getAnswerText())
+                    .text(answerReq.getAnswerText())
                     .correct(answerReq.isCorrect())
                     .question(question)
                     .build();
+
             question.getAnswers().add(answer);
         });
 
         return questionRepository.save(question);
     }
+
 
     @Override
     public List<Question> getQuestionsByExamId(Long examId) {
@@ -76,7 +100,7 @@ public class QuestionServiceImpl implements QuestionService {
         // Добавляем новые ответы
         questionRequest.getAnswers().forEach(answerReq -> {
             Answer answer = Answer.builder()
-                    .answerText(answerReq.getAnswerText())
+                    .text(answerReq.getAnswerText())
                     .correct(answerReq.isCorrect())
                     .question(question)
                     .build();

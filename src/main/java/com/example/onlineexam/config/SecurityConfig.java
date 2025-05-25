@@ -39,11 +39,12 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/exams/**/questions").hasAnyRole("TEACHER", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/exams/**/questions/**").hasAnyRole("TEACHER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/exams/**/questions/**").hasAnyRole("TEACHER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/exams/**/questions/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/exams/**/questions").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/exams/*/questions").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/exams/*/questions/*").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/exams/*/questions/*").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/exams/*/questions").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/exams/*/questions/*").permitAll()
+
 
                         .requestMatchers("/api/exams/**").hasAnyRole("TEACHER", "ADMIN")
 
