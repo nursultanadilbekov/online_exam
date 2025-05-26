@@ -90,14 +90,14 @@ public class SubmissionService {
                     .findFirst()
                     .ifPresent(as -> {
                         qr.setSelectedAnswerId(as.getSelectedAnswer().getId());
-                        qr.setSelectedAnswerText(as.getSelectedAnswer().getText());
+                        qr.setSelectedAnswerText(as.getSelectedAnswer().getAnswerText());
                         qr.setCorrect(as.getSelectedAnswer().isCorrect());
                     });
 
             List<AnswerDTO> allAnswers = question.getAnswers().stream().map(answer -> {
                 AnswerDTO ad = new AnswerDTO();
                 ad.setId(answer.getId());
-                ad.setText(answer.getText());
+                ad.setAnswerText(answer.getAnswerText());
                 ad.setCorrect(answer.isCorrect());
                 return ad;
             }).toList();

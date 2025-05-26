@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class AnswerDTO {
     private Long id;
-    private String text;
+    private String answerText;
     private boolean correct;
 }

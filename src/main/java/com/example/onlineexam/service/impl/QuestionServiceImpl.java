@@ -64,7 +64,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
 
             Answer answer = Answer.builder()
-                    .text(answerReq.getAnswerText())
+                    .answerText(answerReq.getAnswerText())
                     .correct(answerReq.isCorrect())
                     .question(question)
                     .build();
@@ -112,7 +112,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
 
             Answer answer = Answer.builder()
-                    .text(answerReq.getAnswerText())
+                    .answerText(answerReq.getAnswerText())
                     .correct(answerReq.isCorrect())
                     .question(question)
                     .build();
