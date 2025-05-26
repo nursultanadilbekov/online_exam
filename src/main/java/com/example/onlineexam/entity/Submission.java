@@ -3,6 +3,7 @@ package com.example.onlineexam.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class Submission {
 
     private int score;
 
-    @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL)
+    private LocalDateTime submittedAt;
+
+    @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<AnswerSubmission> answerSubmissions = new ArrayList<>();
 }

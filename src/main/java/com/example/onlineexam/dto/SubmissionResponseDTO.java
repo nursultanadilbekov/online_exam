@@ -1,14 +1,15 @@
 package com.example.onlineexam.dto;
 
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class ExamResult {
-    private Long examId;
+public class SubmissionResponseDTO {
+    private Long id;
     private String examTitle;
-    private Long studentId;
     private int score;
-    private int totalQuestions;
+    private LocalDateTime submittedAt;
     private List<QuestionResult> questions;
 }

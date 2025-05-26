@@ -13,15 +13,15 @@ public class AnswerSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "submission_id")
     private Submission submission;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "answer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "selected_answer_id")
     private Answer selectedAnswer;
 }
