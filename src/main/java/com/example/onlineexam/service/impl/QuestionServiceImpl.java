@@ -102,7 +102,6 @@ public class QuestionServiceImpl implements QuestionService {
 
         question.setText(questionRequest.getText());
 
-        // Удаляем старые ответы
         answerRepository.deleteAll(question.getAnswers());
         question.getAnswers().clear();
 

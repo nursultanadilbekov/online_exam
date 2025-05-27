@@ -25,7 +25,6 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-        // Создаем ключ из секретной строки
         this.jwtSecret = Keys.hmacShaKeyFor(jwtSecretString.getBytes());
     }
 

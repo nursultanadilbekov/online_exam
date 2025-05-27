@@ -71,7 +71,6 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         Submission savedSubmission = submissionRepository.save(submission);
 
-        // Маппинг в DTO
         return mapToSubmissionResponse(savedSubmission);
     }
 
@@ -102,8 +101,6 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
         return dtos;
     }
-
-    // ---------------------- MANUAL MAPPERS ----------------------
 
     private ExamResult mapToExamResult(Submission submission) {
         ExamResult result = new ExamResult();

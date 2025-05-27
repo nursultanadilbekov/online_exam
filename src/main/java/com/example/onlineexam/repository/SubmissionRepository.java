@@ -7,12 +7,9 @@ import java.util.Optional;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
-    // Получить все Submission студента
     List<Submission> findByStudentId(Long studentId);
 
-    // Получить последний Submission студента по экзамену, сортируя по дате отправки (submittedAt)
     Optional<Submission> findTopByStudentIdAndExamIdOrderBySubmittedAtDesc(Long studentId, Long examId);
 
-    // Проверить, существует ли уже Submission у студента по экзамену
     boolean existsByStudentIdAndExamId(Long studentId, Long examId);
 }

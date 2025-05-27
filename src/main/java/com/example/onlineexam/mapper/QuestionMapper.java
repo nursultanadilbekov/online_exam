@@ -31,7 +31,6 @@ public class QuestionMapper {
                 .map(AnswerMapper::toEntity)
                 .collect(Collectors.toList());
         question.setAnswers(answers);
-        // Связь с Exam ставим в сервисе, здесь не трогаем
         return question;
     }
 }
